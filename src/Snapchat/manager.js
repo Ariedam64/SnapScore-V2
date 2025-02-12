@@ -227,20 +227,20 @@ class AccountManager {
     logStateAverageMains() {
         const workingMainAccounts = this.mainAccounts.filter(account => account.state.isWorking);
         const restartingState = this.state.mainRestarting ? "🔄" : "✅";
-        console.group(`🔸 Etat Détail des Comptes Mains [${workingMainAccounts.length}/${this.mainAccounts.length}] ${restartingState} 🔸`);
-        console.log(`- Total des snaps envoyés: ${this.state.totalSends} (${this.state.avgSendsPerMinute.toFixed(0)}/min)`);
-        console.log(`- Total des snaps restants a envoyer: ${this.state.totalLeftSend}`);
-        console.log(`- Durée moyenne d'envoi des snaps: ${this.state.sendDuration.toFixed(2)} ms`);
+        console.group(`🔸 Main Accounts Status Details [${workingMainAccounts.length}/${this.mainAccounts.length}] ${restartingState} 🔸`);
+        console.log(`- Total snaps sent: ${this.state.totalSends} (${this.state.avgSendsPerMinute.toFixed(0)}/min)`);
+        console.log(`- Total snaps left to send: ${this.state.totalLeftSend}`);
+        console.log(`- Average snap sending duration: ${this.state.sendDuration.toFixed(2)} ms`);
         console.groupEnd();
     }
-
+    
     logAltAccounts() {
         const workingAltAccounts = this.altAccounts.filter(account => account.state.isWorking);
         const restartingState = this.state.altRestarting ? "🔄" : "✅";
-        console.group(`🔸 Etat Détail des Comptes Alts [${workingAltAccounts.length}/${this.altAccounts.length}] ${restartingState} 🔸`);
-        console.log(`- Total des snaps vues: ${this.state.totalViews} (${this.state.avgViewsPerMinute.toFixed(0)}/min)`);
-        console.log(`- Total des snaps restants à ouvrir: ${this.state.totalLeftOpen}`);
-        console.log(`- Durée moyenne d'ouverture des snaps: ${this.state.openDuration.toFixed(2)} ms`);
+        console.group(`🔸 Alt Accounts Status Details [${workingAltAccounts.length}/${this.altAccounts.length}] ${restartingState} 🔸`);
+        console.log(`- Total snaps viewed: ${this.state.totalViews} (${this.state.avgViewsPerMinute.toFixed(0)}/min)`);
+        console.log(`- Total snaps left to open: ${this.state.totalLeftOpen}`);
+        console.log(`- Average snap opening duration: ${this.state.openDuration.toFixed(2)} ms`);
         console.groupEnd();
     }
 
@@ -267,20 +267,22 @@ class AccountManager {
             this.logAltAccounts();
             console.log("\n");
 
+
             if (this.state.isBlocked) {
-                console.group("🔴 Comptes bloqués:")
+                console.group("🔴 Blocked Accounts:")
                 this.altAccounts.filter(account => account.state.isBlocked).forEach(account => {
                     console.log(`- ${account.username}: ${account.state.totalLeft}`);
                 });
                 console.groupEnd();
-            } else {
-                console.group("🟢 Aucun compte bloqué.");
+            }
+            if (!this.state.isBlocked) {
+                console.group("🟢 Unblocked Accounts");
                 this.altAccounts.filter(account => !account.state.isBlocked).forEach(account => {
                     console.log(`- ${account.username}: ${account.state.totalLeft}`);
                 });
-                console.groupEnd();
+                console.groupEnd();     
             }
-            
+        
             setTimeout(loop, 500);
         };
         loop();
@@ -290,6 +292,7 @@ class AccountManager {
 
         const blockedAlts = this.altAccounts.filter(account => account.state.isBlocked);
         if (blockedAlts.length > 0 && !this.state.isBlocked) {
+            this.state.mainRestarting = true;
             this.state.isBlocked = true;
             await this.disconnectMainAccounts();
         } else if (blockedAlts.length === 0 && this.state.isBlocked) {
@@ -297,6 +300,7 @@ class AccountManager {
             await this.connectMainAccounts();
             await this.connectMainsToGroupDiscussion(this.discussionName);
             await this.startObservingChatMains();
+            this.state.mainRestarting = false;
         }
     }
 
