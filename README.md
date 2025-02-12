@@ -9,6 +9,7 @@ SnapScore V2 is an automation tool designed to increase your Snapchat score by a
 - Group chat monitoring
 - Flexible interaction delay configuration
 - Debug mode for troubleshooting
+- Maximum of 2 active sessions per Snapchat account (Snapchat limitation)
 
 ## 📥 Installation
 
