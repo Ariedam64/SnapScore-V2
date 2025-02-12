@@ -258,7 +258,7 @@ class AccountManager {
     startLog(){   
         const loop = async () => {
             console.clear();
-            console.log(`Durée de lancement: ${this.state.elapsedTime}`);
+            console.log(`Launch duration: ${this.state.elapsedTime}`);
             console.log("\n");
 
             this.logStateAverageMains();
