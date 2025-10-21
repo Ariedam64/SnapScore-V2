@@ -64,6 +64,9 @@ class Account {
                     "--disable-popup-blocking",
                     "--disable-print-preview",
                     "--disable-prompt-on-repost",
+                    "--enable-gpu",
+                    "--use-gl=desktop",
+                    "ignore-gpu-blacklist",
                     ...(!this.DEBUG ? ["--disable-renderer-backgrounding"] : []),
                     ...(!this.DEBUG ? ["--disable-gl-drawing-for-tests"] : []),
                 ]
