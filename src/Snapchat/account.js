@@ -77,11 +77,11 @@ class Account {
             await this.page.setUserAgent(this.userAgent);
 
              // Navigate to Snapchat
-            await this.page.goto("https://web.snapchat.com", { waitUntil: "networkidle2" });
+            await this.page.goto("https://www.snapchat.com/web/", { waitUntil: "networkidle2" });
 
             // Wait for the page to fully load
             const pageLoaded = await this.page.waitForFunction(
-                () => window.location.href === "https://web.snapchat.com/",
+                () => window.location.href === "https://www.snapchat.com/web/",
                 { timeout: 30000 }
             );
 
@@ -167,6 +167,7 @@ class Account {
 
     async sendMultipleSnaps() {
         try {
+            
             await cameraMutex.lock(); 
             
             if (this.browser){

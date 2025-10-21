@@ -15,8 +15,8 @@ const SnapSelectors = {
     // Camera selectors
     CAMERA_BUTTON: '.cDumY', // Camera button
     CAMERA_LOADED: '#cameraKitContainer', // Camera loaded container
-    BACK_CAMERA_BUTTON: '.STlkX', // Back camera button
-    TAKE_PICTURE_BUTTON: '.gK0xL', // Take picture button
+    BACK_BUTTON: '.STlkX', // Camera back button
+    TAKE_PICTURE_BUTTON: '.fE2D5', // Take picture button
     SEND_TO_BUTTON: '.fGS78', // Send to button
     SEND_PICTURE_BUTTON: '.TYX6O', // Send picture button
 };

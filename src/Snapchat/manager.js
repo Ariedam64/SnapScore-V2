@@ -6,15 +6,14 @@ mainAccountsAvailable = [
 ];
 
 altAccountsAvailable = [
-    //"max.hun30", 
-    //"max.hun31", 
+    "max.hun31", 
     "max.hun32", 
     "max.hun33", 
     "max.hun34", 
     "max.hun35", 
     "max.hun36", 
     "max.hun37", 
-    "max.hun38", 
+    //"max.hun38", 
     //"max.hun39",
 ];
 

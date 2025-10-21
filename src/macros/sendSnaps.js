@@ -1,5 +1,6 @@
 const { SnapSelectors } = require("../DOM/selectors");
 
+
 async function sendMultipleSnaps(page, state) {
 
     if (state.isBrowserClosed) {
@@ -8,6 +9,9 @@ async function sendMultipleSnaps(page, state) {
 
     try {
         await page.evaluate(
+
+
+
             async (waitingSnaps, openedSnaps, cameraButton, cameraLoaded, backCameraButton, takePictureButton, sendToButton, sendButton, state) => {
                 console.log("Envoi de snaps en cours...");
 
@@ -56,21 +60,39 @@ async function sendMultipleSnaps(page, state) {
                 state.lastSendTimestamp = null;
 
                 const tasks = Array.from({ length: snapToSend }).map(async () => {
+
+                                      const forceClick = el => {
+                    if (!el) return;
+                    const o = { bubbles: true, cancelable: true, composed: true, view: window, buttons: 1, pointerId: 1, pointerType: 'mouse' };
+                    el.dispatchEvent(new PointerEvent('pointerdown', o));
+                    el.dispatchEvent(new PointerEvent('pointerup',   o));
+                };
                     try {
 
+                        console.log("attente caméra")
                         document.querySelector(cameraButton).click();
                         await waitForElement(cameraLoaded);
-                        
+                        console.log("caméra trouvé")
+
+                        console.log("attente backButton")
                         const backButton = document.querySelector(backCameraButton);
                         if (backButton) backButton.click();
+                        console.log("backButton envoyé")
 
+                        console.log("attente bouton envoyé")
                         const picButton = await waitForElement(takePictureButton);
-                        picButton.click();
-
+                        forceClick(picButton)
+                        console.log("takePictureButton envoyé")
+  
+                        console.log("attendre sendto")
                         const snapSendToButton = await waitForElement(sendToButton);
                         snapSendToButton.click();
+                        console.log("sendToButton envoyé")
+
+                        console.log("attendre send")
                         const snapSendButton = await waitForElement(sendButton);
                         snapSendButton.click();
+                        console.log("sendButton envoyé")
 
                     } catch (error) {
                         console.warn("Un élément n'a pas été trouvé à temps lors de l'envoi du snap :", error);
@@ -86,7 +108,7 @@ async function sendMultipleSnaps(page, state) {
             SnapSelectors.OPENED_MESSAGE,
             SnapSelectors.CAMERA_BUTTON,
             SnapSelectors.CAMERA_LOADED,
-            SnapSelectors.BACK_CAMERA_BUTTON,
+            SnapSelectors.BACK_BUTTON,
             SnapSelectors.TAKE_PICTURE_BUTTON,
             SnapSelectors.SEND_TO_BUTTON,
             SnapSelectors.SEND_PICTURE_BUTTON,
