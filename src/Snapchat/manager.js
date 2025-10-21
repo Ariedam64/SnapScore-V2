@@ -7,14 +7,14 @@ mainAccountsAvailable = [
 
 altAccountsAvailable = [
     //"max.hun30", 
-    "max.hun31", 
+    //"max.hun31", 
     "max.hun32", 
     "max.hun33", 
     "max.hun34", 
     "max.hun35", 
     "max.hun36", 
     "max.hun37", 
-    //"max.hun38", 
+    "max.hun38", 
     //"max.hun39",
 ];
 
@@ -269,18 +269,17 @@ class AccountManager {
 
 
             if (this.state.isBlocked) {
-                console.group("🔴 Blocked Accounts:")
+                console.group("🔴 Accounts:")
                 this.altAccounts.filter(account => account.state.isBlocked).forEach(account => {
                     console.log(`- ${account.username}: ${account.state.totalLeft}`);
                 });
                 console.groupEnd();
-            }
-            if (!this.state.isBlocked) {
-                console.group("🟢 Unblocked Accounts");
+            } else {
+                console.group("🟢 Accounts");
                 this.altAccounts.filter(account => !account.state.isBlocked).forEach(account => {
                     console.log(`- ${account.username}: ${account.state.totalLeft}`);
                 });
-                console.groupEnd();     
+                console.groupEnd();  
             }
         
             setTimeout(loop, 500);
