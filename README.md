@@ -1,68 +1,100 @@
 # SnapScore V2
 
-SnapScore V2 is an automation tool designed to increase your Snapchat score by automating interactions between multiple accounts.
+> Automation tooling for coordinating multiple Snapchat accounts to boost streak activity and score growth.
+
+SnapScore V2 orchestrates several Snapchat accounts in parallel using headless browser automation. It is designed for power users who need to manage both "main" and "alt" accounts, monitor group discussions, and automatically send or open snaps according to configurable pacing rules. The project is built on top of [Puppeteer Cluster](https://github.com/thomasdondorf/puppeteer-cluster) to control multiple browser sessions concurrently.
+
+## 📚 Table of Contents
+- [Features](#-features)
+- [Requirements](#-requirements)
+- [Installation](#-installation)
+- [Configuration](#-configuration)
+  - [Runtime constants](#runtime-constants)
+  - [Account roster](#account-roster)
+- [Usage](#-usage)
+- [Project Structure](#-project-structure)
+- [Development Scripts](#-development-scripts)
+- [Troubleshooting](#-troubleshooting)
+- [Disclaimer](#-disclaimer)
+- [License](#-license)
 
 ## ⚡ Features
+- Manage pools of main and alternative Snapchat accounts with isolated sessions.
+- Automatically sign in, join group discussions, send snaps, and open incoming snaps.
+- Monitor chat activity from both perspectives (senders and receivers) to keep the automation loop informed.
+- Adjustable delays for snap sending and opening to emulate human-like behaviour.
+- Built-in debug mode to assist with first-time login flows and issue diagnosis.
+- Real-time state tracking for counts such as total views, sends, and duration metrics.
 
-- Automated management of multiple Snapchat accounts
-- Automatic sending and opening of snaps
-- Group chat monitoring
-- Flexible interaction delay configuration
-- Debug mode for troubleshooting
-- Maximum of 2 active sessions per Snapchat account (Snapchat limitation)
+## 🛠 Requirements
+- **Node.js** 18 or newer is recommended.
+- **npm** (bundled with Node.js) for installing dependencies and running scripts.
+- A machine capable of running multiple Chromium instances (the default browser driven by Puppeteer).
 
 ## 📥 Installation
-
 ```bash
+# Clone the repository
 git clone https://github.com/yourusername/SnapScore-V2.git
 cd SnapScore-V2
+
+# Install dependencies
 npm install
 ```
 
-## ⚙️ Configuration in index.js
+If you prefer **yarn** or **pnpm**, install the dependencies with your package manager of choice after cloning the repository.
 
+## ⚙️ Configuration
+
+### Runtime constants
+The primary runtime settings live in [`src/index.js`](src/index.js):
 ```javascript
-const DEBUG = false;        // Set to true for first connection
-const MAIN_ACCOUNTS = 2;    // Number of main accounts
-const ALT_ACCOUNTS = 7;     // Number of alternative accounts
-const LATENCY_OPEN = 1000;  // Snap opening delay (ms)
-const LATENCY_SEND = 1000;  // Snap sending delay (ms)
-const GROUP_NAME = 'Boost'; // Discussion group name
+const DEBUG = false;        // Enable manual login and verbose logging
+const MAIN_ACCOUNTS = 2;    // Number of primary accounts participating
+const ALT_ACCOUNTS = 7;     // Number of supporting/alt accounts
+const LATENCY_OPEN = 1000;  // Delay (ms) between opening snaps per account
+const LATENCY_SEND = 1000;  // Delay (ms) between sending snaps per account
+const GROUP_NAME = 'Boost'; // Snapchat group to join and monitor
 ```
+Adjust these values to reflect how many accounts you control and the pacing you want to apply. When you run the application for the very first time, set `DEBUG = true` so that each browser window pauses for manual authentication.
 
-## 🔑 IMPORTANT Initial Setup
-
-1. **First Use - Debug Mode**:
-   - Set `DEBUG = true`
-   - Run with `npm start`
-   - Manually log in to each account one by one when prompted
-   - This step is required only once to save sessions
-
-2. **Normal Use**:
-   - Once all accounts are connected, set `DEBUG = false`
-   - The program will then run automatically
+### Account roster
+Default account usernames are defined in [`src/Snapchat/manager.js`](src/Snapchat/manager.js). Update the `mainAccountsAvailable` and `altAccountsAvailable` arrays to match the accounts you intend to automate. The manager selects as many accounts as you specify in `MAIN_ACCOUNTS` and `ALT_ACCOUNTS` from these lists.
 
 ## 🚀 Usage
-
 ```bash
+# Launch the automation
 npm start
 ```
 
-## 📁 Structure
+1. **First run (debug mode):**
+   - Set `DEBUG = true` in `src/index.js`.
+   - Execute `npm start` and complete the manual login prompts for each account.
+   - Sessions are cached; you can revert `DEBUG` to `false` once every account has been authenticated.
+2. **Subsequent runs:**
+   - Keep `DEBUG = false` to allow the automation to start immediately with the saved sessions.
 
+## 🧭 Project Structure
 ```
 src/
-├── DOM/              # DOM elements handling
-├── Snapchat/         # Snapchat accounts logic
-├── macros/           # Automation macros
-├── scripts/          # Injection scripts
-└── utils/           # Utilities
+├── DOM/              # Helpers for interacting with Snapchat's DOM elements
+├── Snapchat/         # Account models, manager, and Snapchat-specific logic
+├── macros/           # High-level automation flows orchestrated by the manager
+├── scripts/          # Browser-injected scripts that run inside Snapchat tabs
+├── utils/            # Shared utilities and helpers
+└── index.js          # Application entry point and runtime configuration
 ```
 
-## ⚠️ Disclaimer
+## 🧪 Development Scripts
+- `npm start` — run the automation.
+- `npm test` — placeholder script (returns success). Extend this with meaningful tests as the project evolves.
 
-This tool is provided for educational purposes only. Using bots or automation may be against Snapchat's terms of service. Use at your own risk.
+## 🛠️ Troubleshooting
+- **Chromium fails to launch:** Ensure your environment meets Puppeteer's [system dependencies](https://pptr.dev/troubleshooting). Running inside a minimal container or server may require installing additional libraries such as `libX11`, `libx11-xcb1`, or `libnss3`.
+- **Accounts reconnect unexpectedly:** Set conservative latency values (`LATENCY_OPEN`, `LATENCY_SEND`) and verify that you are not exceeding Snapchat's simultaneous session limits (two active sessions per account).
+- **Stale sessions:** Delete the session data directory generated by Puppeteer or rerun with `DEBUG = true` to refresh logins.
+
+## ⚠️ Disclaimer
+This software is provided for educational purposes only. Automating Snapchat interactions may breach Snapchat's Terms of Service and can result in account suspension or other penalties. Use at your own risk and ensure you have permission to automate any accounts involved.
 
 ## 📝 License
-
-MIT License
+Distributed under the **ISC License** as declared in [`package.json`](package.json).
